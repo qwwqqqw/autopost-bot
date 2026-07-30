@@ -1,6 +1,6 @@
 import httpx
 import logging
-from config import GEMINI_API_KEY
+from config import AI_API_KEY
 
 logger = logging.getLogger(__name__)
 
@@ -9,11 +9,11 @@ async def rewrite_text_with_gemini(text: str) -> str:
     Автоматический рерайт текста новости/поста с помощью Google Gemini API.
     Делает текст уникальным, добавляет эмодзи и форматирует под Telegram.
     """
-    if not GEMINI_API_KEY:
-        logger.warning("GEMINI_API_KEY не установлен. Рерайт пропущен.")
+    if not AI_API_KEY:
+        logger.warning("AI_API_KEY не установлен. Рерайт пропущен.")
         return text
         
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={GEMINI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={AI_API_KEY}"
     
     prompt = (
         "Ты — профессиональный SMM-редактор популярного Telegram-канала. "
