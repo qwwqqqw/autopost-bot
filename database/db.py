@@ -39,6 +39,13 @@ async def init_db():
                 value TEXT
             )
         """)
+        
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS published_links (
+                link TEXT PRIMARY KEY,
+                published_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
         await db.commit()
 
 async def get_setting(key: str, default: str = None) -> str:
@@ -149,3 +156,16 @@ async def toggle_reaction(post_id: int, user_id: int, reaction_type: str) -> Dic
         rows = await cursor.fetchall()
         counts = {r[0]: r[1] for r in rows}
         return counts
+
+async def check_link_published(link: str) -> bool:
+    """Проверяет, публиковалась ли уже эта новость."""
+    async with aiosqlite.connect(DB_PATH) as db:
+        cursor = await db.execute("SELECT 1 FROM published_links WHERE link = ?", (link,))
+        row = await cursor.fetchone()
+        return bool(row)
+
+async def mark_link_published(link: str):
+    """Отмечает ссылку как опубликованную."""
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute("INSERT OR IGNORE INTO published_links (link) VALUES (?)", (link,))
+        await db.commit()

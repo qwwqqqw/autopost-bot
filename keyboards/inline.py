@@ -42,11 +42,19 @@ def get_rss_navigation_keyboard(index: int, total_count: int) -> InlineKeyboardM
     )
     return keyboard
 
-def get_settings_keyboard(watermark_enabled: bool) -> InlineKeyboardMarkup:
+def get_settings_keyboard(watermark_enabled: bool, autopost_enabled: bool, autopost_interval: str) -> InlineKeyboardMarkup:
     """Клавиатура управления настройками."""
     wm_status = "✅ Вкл" if watermark_enabled else "❌ Выкл"
+    ap_status = "✅ Вкл" if autopost_enabled else "❌ Выкл"
+    
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
+            [
+                InlineKeyboardButton(text=f"🤖 Авто-постинг: {ap_status}", callback_data="toggle_setting_autopost")
+            ],
+            [
+                InlineKeyboardButton(text=f"⏱ Интервал (мин): {autopost_interval}", callback_data="edit_setting_autopost_interval")
+            ],
             [
                 InlineKeyboardButton(text=f"Водяной знак: {wm_status}", callback_data="toggle_setting_watermark")
             ],

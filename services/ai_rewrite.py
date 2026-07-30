@@ -13,7 +13,7 @@ async def rewrite_text_with_gemini(text: str) -> str:
         logger.warning("AI_API_KEY не установлен. Рерайт пропущен.")
         return text
         
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={AI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key={AI_API_KEY}"
     
     prompt = (
         "Ты — профессиональный SMM-редактор популярного Telegram-канала. "

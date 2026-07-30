@@ -67,6 +67,7 @@ async def send_rss_article_preview(message: Message, user_id: int, index: int, i
 
     article = articles[index]
     formatted_text = (
+        f"🗞 <b>Источник:</b> <a href=\"{article['link']}\">{article.get('source', 'Неизвестно')}</a> {article.get('date', '')}\n"
         f"<b>{article['title']}</b>\n\n"
         f"{article['summary']}"
     )
@@ -158,22 +159,29 @@ async def publish_rss_handler(callback: CallbackQuery, state: FSMContext, bot: B
     post_id = await add_scheduled_post(final_text, final_photo, [], now_str, CHANNEL_ID)
     
     from aiogram.types import FSInputFile
-    if final_photo and os.path.exists(final_photo):
-        sent_msg = await bot.send_photo(
-            chat_id=CHANNEL_ID,
-            photo=FSInputFile(final_photo),
-            caption=final_text,
-            parse_mode="HTML"
-        )
-    else:
-        sent_msg = await bot.send_message(
-            chat_id=CHANNEL_ID,
-            text=final_text,
-            parse_mode="HTML"
-        )
-    await mark_post_published(post_id, sent_msg.message_id)
-    await callback.answer("Новость опубликована!")
-    await callback.message.answer(f"🎉 Новость успешно опубликована!")
+    try:
+        if final_photo and os.path.exists(final_photo):
+            sent_msg = await bot.send_photo(
+                chat_id=CHANNEL_ID,
+                photo=FSInputFile(final_photo),
+                caption=final_text,
+                parse_mode="HTML"
+            )
+        else:
+            sent_msg = await bot.send_message(
+                chat_id=CHANNEL_ID,
+                text=final_text,
+                parse_mode="HTML"
+            )
+        await mark_post_published(post_id, sent_msg.message_id)
+        await callback.answer("Новость опубликована!")
+        await callback.message.answer(f"🎉 Новость успешно опубликована!")
+        await callback.message.delete()
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Ошибка публикации: {e}")
+        await callback.message.answer("❌ Произошла ошибка при публикации в канал.")
+        await callback.answer()
 
 
 @router.callback_query(F.data.startswith("rss_sched_"))

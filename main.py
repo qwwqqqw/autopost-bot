@@ -7,6 +7,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from config import BOT_TOKEN
 from database.db import init_db
 from services.scheduler import publish_due_posts_task
+from services.autoposter import autoposter_task
 from handlers import common, create_post, scheduled, rss_feed
 
 logging.basicConfig(
@@ -33,6 +34,7 @@ async def main():
     dp.include_router(rss_feed.router)
 
     asyncio.create_task(publish_due_posts_task(bot))
+    asyncio.create_task(autoposter_task(bot))
 
     await bot.delete_webhook(drop_pending_updates=True)
     logger.info("Бот  готов к работе")
