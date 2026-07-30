@@ -1,0 +1,25 @@
+# Виртуальное окружение
+venv/
+.venv/
+env/
+
+# Ключи и конфиденциальные данные
+.env
+
+# Кэш Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# База данных SQLite
+database/*.db
+*.db
+
+# Загруженные временные медиафайлы
+uploads/
+
+# Настройки IDE
+.vscode/
+.idea/
+*.swp
