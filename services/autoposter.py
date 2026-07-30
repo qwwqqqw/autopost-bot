@@ -119,4 +119,4 @@ async def autoposter_task(bot: Bot):
         except Exception as e:
             logger.error(f"Глобальная ошибка в фоновом автопостинге: {e}")
             
-        await asyncio.sleep(60) # Проверяем настройки каждую минуту
+        await asyncio.sleep(60)
