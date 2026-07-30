@@ -45,7 +45,7 @@ tg_content_bot/
 
 ### 1. Подготовка окружения
 ```bash
-git clone https://github.com/your-username/tg_content_bot.git
+git clone https://github.com/qwwqqqw/autopost-bot.git
 cd tg_content_bot
 
 # Создание и активация виртуального окружения

@@ -5,10 +5,11 @@ def get_main_reply_keyboard() -> ReplyKeyboardMarkup:
     keyboard = ReplyKeyboardMarkup(
         keyboard=[
             [
-                KeyboardButton(text="📰 RSS Новости"),
+                KeyboardButton(text="✍️ Создать пост"),
                 KeyboardButton(text="📅 Очередь постов")
             ],
             [
+                KeyboardButton(text="📰 RSS Новости"),
                 KeyboardButton(text="⚙️ Настройки")
             ]
         ],
