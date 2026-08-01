@@ -43,9 +43,16 @@ async def init_db():
         await db.execute("""
             CREATE TABLE IF NOT EXISTS published_links (
                 link TEXT PRIMARY KEY,
+                summary TEXT,
                 published_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        # Try to add summary column if table already existed without it
+        try:
+            await db.execute("ALTER TABLE published_links ADD COLUMN summary TEXT")
+        except Exception:
+            pass
+        await db.commit()
         await db.commit()
 
 async def get_setting(key: str, default: str = None) -> str:
@@ -164,8 +171,24 @@ async def check_link_published(link: str) -> bool:
         row = await cursor.fetchone()
         return bool(row)
 
-async def mark_link_published(link: str):
-    """Отмечает ссылку как опубликованную."""
+async def mark_link_published(link: str, summary: str = ""):
+    """Отмечает ссылку как опубликованную (вместе с ее саммари для ИИ проверки дубликатов)."""
     async with aiosqlite.connect(DB_PATH) as db:
-        await db.execute("INSERT OR IGNORE INTO published_links (link) VALUES (?)", (link,))
+        await db.execute("INSERT OR REPLACE INTO published_links (link, summary) VALUES (?, ?)", (link, summary))
         await db.commit()
+
+async def get_recent_summaries(limit: int = 15) -> List[str]:
+    """Возвращает список саммари последних опубликованных постов."""
+    async with aiosqlite.connect(DB_PATH) as db:
+        cursor = await db.execute("SELECT summary FROM published_links WHERE summary IS NOT NULL AND summary != '' ORDER BY published_at DESC LIMIT ?", (limit,))
+        rows = await cursor.fetchall()
+        return [r[0] for r in rows]
+
+async def get_published_count_last_hour() -> int:
+    """Возвращает количество успешно опубликованных постов за последний час."""
+    async with aiosqlite.connect(DB_PATH) as db:
+        cursor = await db.execute(
+            "SELECT COUNT(*) FROM published_links WHERE summary IS NOT NULL AND summary != '' AND published_at >= datetime('now', '-1 hour')"
+        )
+        row = await cursor.fetchone()
+        return row[0] if row else 0

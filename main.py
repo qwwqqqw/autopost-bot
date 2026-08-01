@@ -1,14 +1,15 @@
 import asyncio
 import logging
 import sys
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from config import BOT_TOKEN
 from database.db import init_db
-from services.scheduler import publish_due_posts_task
 from services.autoposter import autoposter_task
-from handlers import common, create_post, scheduled, rss_feed
+from handlers import common
 
 logging.basicConfig(
     level=logging.INFO,
@@ -29,15 +30,10 @@ async def main():
     dp = Dispatcher(storage=MemoryStorage())
 
     dp.include_router(common.router)
-    dp.include_router(create_post.router)
-    dp.include_router(scheduled.router)
-    dp.include_router(rss_feed.router)
 
-    asyncio.create_task(publish_due_posts_task(bot))
     asyncio.create_task(autoposter_task(bot))
 
     await bot.delete_webhook(drop_pending_updates=True)
-    logger.info("Бот  готов к работе")
     
     try:
         await dp.start_polling(bot)

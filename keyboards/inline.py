@@ -42,24 +42,47 @@ def get_rss_navigation_keyboard(index: int, total_count: int) -> InlineKeyboardM
     )
     return keyboard
 
-def get_settings_keyboard(watermark_enabled: bool, autopost_enabled: bool, autopost_interval: str) -> InlineKeyboardMarkup:
-    """Клавиатура управления настройками."""
-    wm_status = "✅ Вкл" if watermark_enabled else "❌ Выкл"
+def get_parsing_menu_keyboard(autopost_enabled: bool) -> InlineKeyboardMarkup:
+    """Клавиатура управления парсингом (автопостингом)."""
     ap_status = "✅ Вкл" if autopost_enabled else "❌ Выкл"
     
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text=f"🤖 Авто-постинг: {ap_status}", callback_data="toggle_setting_autopost")
-            ],
+                InlineKeyboardButton(text=f"Автопостинг: {ap_status}", callback_data="toggle_setting_autopost")
+            ]
+        ]
+    )
+    return keyboard
+
+def get_settings_keyboard(watermark_enabled: bool, signature_enabled: bool, max_posts_per_hour: str = "0") -> InlineKeyboardMarkup:
+    """Клавиатура управления настройками."""
+    wm_status = "✅ Вкл" if watermark_enabled else "❌ Выкл"
+    sig_status = "✅ Вкл" if signature_enabled else "❌ Выкл"
+    limit_label = "Без лимита" if max_posts_per_hour == "0" else f"{max_posts_per_hour} постов/час"
+    
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
             [
-                InlineKeyboardButton(text=f"⏱ Интервал (мин): {autopost_interval}", callback_data="edit_setting_autopost_interval")
+                InlineKeyboardButton(text=f"⏱ Лимит в час: {limit_label}", callback_data="edit_setting_max_posts_per_hour")
             ],
             [
                 InlineKeyboardButton(text=f"Водяной знак: {wm_status}", callback_data="toggle_setting_watermark")
             ],
             [
-                InlineKeyboardButton(text="Изменить текст водяного знака", callback_data="edit_setting_watermark_text")
+                InlineKeyboardButton(text="Текст водяного знака", callback_data="edit_setting_watermark_text")
+            ],
+            [
+                InlineKeyboardButton(text=f"Рекламная подпись: {sig_status}", callback_data="toggle_setting_signature")
+            ],
+            [
+                InlineKeyboardButton(text="Текст рекламной подписи", callback_data="edit_setting_signature_text")
+            ],
+            [
+                InlineKeyboardButton(text="🧠 Настройка ИИ", callback_data="edit_setting_ai_prompt")
+            ],
+            [
+                InlineKeyboardButton(text="📡 Источники", callback_data="edit_setting_target_channels")
             ]
         ]
     )

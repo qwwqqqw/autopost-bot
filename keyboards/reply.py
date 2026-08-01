@@ -5,8 +5,8 @@ def get_main_reply_keyboard() -> ReplyKeyboardMarkup:
     keyboard = ReplyKeyboardMarkup(
         keyboard=[
             [
-                KeyboardButton(text="⚙️ Настройки"),
-                KeyboardButton(text="📊 Статус работы")
+                KeyboardButton(text="🚀 Парсинг"),
+                KeyboardButton(text="⚙️ Настройки")
             ]
         ],
         resize_keyboard=True
